@@ -11,12 +11,33 @@ namespace HotelReservationSystem.Controllers
     [ApiController]
     public class ReservationsController : ControllerBase
     {
-        // GET: api/Reservations
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private static readonly Random random = new Random(); // Reuse Random instance for better randomness
+
+        // List of random last names
+        private static readonly List<string> lastNames = new List<string>
         {
-            return new string[] {  };
-        }
+            "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis"
+        };
+
+        // List of city names
+        private static readonly List<string> cityNames = new List<string>
+        {
+            "New York", "Los Angeles", "Chicago", "Miami", "Seattle", "Denver", "Austin", "Boston"
+        };
+
+        // List of synonyms for "hotel"
+        private static readonly List<string> hotelSynonyms = new List<string>
+        {
+            "Inn", "Resort", "Lodge", "Suites", "Retreat", "Villa", "Palace", "Oasis"
+        };
+
+        // List of reservation comment phrases
+        private static readonly List<string> commentPhrases = new List<string>
+        {
+            "Requested late check-in.", "VIP customer with additional services.",
+            "Allergic to pet dander, avoid pet-friendly rooms.", "Needs airport shuttle service.",
+            "Celebrating an anniversary, add complimentary wine."
+        };
 
         // GET: api/Reservations/ReservationID
         [HttpGet("{reservationid}", Name = "Get")]
@@ -25,18 +46,51 @@ namespace HotelReservationSystem.Controllers
             // Pretend to do some work
             Thread.SpinWait(int.MaxValue / 500);
 
-            // Return dummy data
+            // Generate dummy data for the reservation
+            DateTime checkin = DateTime.Now.AddDays(random.Next(1, 30));
+            DateTime checkout = checkin.AddDays(random.Next(1, 14));
+            
             return new CustomerReservation
             {
                 ReservationID = reservationid,
-                CustomerID = $"{new Random().Next()}",
-                HotelID = $"Hotel {new Random().Next()}",
-                Checkin = DateTime.Now.AddDays(10),
-                Checkout = DateTime.Now.AddDays(10 + new Random().NextDouble() * 100),
-                NumberOfGuests = new Random().Next(5) + 1,
-                ReservationComments = getRandomString(new Random().Next(1000))
+                CustomerID = GenerateCustomerID(),
+                CustomerLastName = lastNames[random.Next(lastNames.Count)],
+                HotelID = GenerateHotelName(),
+                Checkin = checkin,
+                Checkout = checkout,
+                NumberOfGuests = random.Next(1, 5),
+                ReservationComments = GenerateRandomComment()
             };
         }
+
+        // Generates a unique customer ID
+        private string GenerateCustomerID()
+        {
+            return $"CUST-{random.Next(1000, 9999)}";
+        }
+
+        // Generates a random hotel name like "Seattle Villa" or "Miami Inn"
+        private string GenerateHotelName()
+        {
+            string city = cityNames[random.Next(cityNames.Count)];
+            string hotelType = hotelSynonyms[random.Next(hotelSynonyms.Count)];
+            return $"{city} {hotelType}";
+        }
+
+        // Selects random comments or combination of comments
+        private string GenerateRandomComment()
+        {
+            int commentCount = random.Next(1, commentPhrases.Count);
+            List<string> selectedComments = new List<string>();
+            
+            for (int i = 0; i < commentCount; i++)
+            {
+                selectedComments.Add(commentPhrases[random.Next(commentPhrases.Count)]);
+            }
+            return string.Join(" ", selectedComments);
+        }
+
+        // Other CRUD methods...
 
         // POST: api/Reservations
         [HttpPost]
@@ -60,18 +114,6 @@ namespace HotelReservationSystem.Controllers
         {
             // Pretend to do some work
             Thread.SpinWait(int.MaxValue / 50);
-        }
-
-        private string getRandomString(int string_length)
-        {
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                var bit_count = (string_length * 6);
-                var byte_count = ((bit_count + 7) / 8); // rounded up
-                var bytes = new byte[byte_count];
-                rng.GetBytes(bytes);
-                return Convert.ToBase64String(bytes);
-            }
         }
     }
 }

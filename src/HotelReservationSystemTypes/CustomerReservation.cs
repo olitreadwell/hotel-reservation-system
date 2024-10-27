@@ -7,6 +7,7 @@ namespace HotelReservationSystemTypes
     {
         public int ReservationID { get; set; }
         public string CustomerID { get; set; }
+        public string CustomerLastName { get; set; }
         public string HotelID { get; set; }
         public DateTime Checkin { get; set; }
         public DateTime Checkout { get; set; }

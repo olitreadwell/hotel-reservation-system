@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: olitreadwellhotelreservationsystem 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: olitreadwellhotelreservationsystem
+  template:
+    metadata:
+      labels:
+        app: olitreadwellhotelreservationsystem 
+    spec:
+      containers:
+        - name: olitreadwellhotelreservationsystem 
+          image: olitreadwellcs750420241026acr.azurecr.io/olitreadwellhotelreservationsystem
+          ports:
+          - containerPort: 80
